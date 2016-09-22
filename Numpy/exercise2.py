@@ -223,3 +223,113 @@ t = np.arange(N-1, len(c))
 plt.plot(t, c[N-1:],'b-', lw=1.0)
 plt.plot(t, ema, 'r-', lw=2.0)
 plt.show()'''
+
+# 绘制布林带
+'''N = 5
+# 计算权重
+weights = np.ones(N)/N
+
+c = np.loadtxt('D:\Learn\Code\python\exercise\data.csv', delimiter=',', usecols=(6, ), unpack=True)
+# 简单移动平均线，注意切片
+sma = np.convolve(weights, c)[N-1:-N+1]
+deviation = []
+
+# 标准差为计算简单移动平均线所用数据的标准差
+for i in range(0, len(c)-N+1):
+        dev = c[i:i+N]
+      
+        averages = np.zeros(N)
+        # fill函数可以将数组元素赋为单一值，平均值恰好为sma数组里的元素
+        averages.fill(sma[i])
+        dev = dev-averages
+        dev  = dev ** 2
+        dev = np.sqrt(np.mean(dev))
+        deviation.append(dev)
+        
+# 书上的代码        
+for i in range(N-1, len(c)):
+        if i+N<len(c):
+            dev = c[i:i+N]
+        else:
+            dev = c[-N:]
+      
+        averages = np.zeros(N)
+        averages.fill(sma[i-N-1])
+        dev = dev-averages
+        dev  = dev ** 2
+        dev = np.sqrt(np.mean(dev))
+        deviation.append(dev)
+
+
+deviation = 2 * np.array(deviation)
+# 每个sma的元素应对应一个标注差
+print len(deviation), len(sma)
+upperBB = sma + deviation
+lowerBB = sma - deviation
+
+c_slice = c[N-1:]
+# 检验数据是否全都落入上轨和下轨内
+between_bands = np.where((c_slice<upperBB)&(c_slice>lowerBB))
+
+print lowerBB[between_bands]
+print c[between_bands]
+print upperBB[between_bands]
+between_bands = len(np.ravel(between_bands))
+print "Ratio between bands", float(between_bands)/len(c_slice)
+
+# 绘图，这个就比较简单了
+t = np.arange(N-1, len(c)) 
+plt.plot(t, c_slice, lw=1.0)
+plt.plot(t, sma, lw=2.0)
+plt.plot(t, upperBB, lw=3.0)
+plt.plot(t, lowerBB, lw=3.0)
+plt.show()       '''
+
+# 用线性模型预测价格
+
+'''# 用于预测所取的样本量
+N = 5
+
+c = np.loadtxt("D:\Learn\Code\python\exercise\data.csv", delimiter=',', usecols = (6, ), unpack=True)
+# 取后N个数
+b = c[-N:]
+# 倒序
+b = b[::-1]
+print "b", b
+
+# 初始化一个N*N的二维数组A
+A = np.zeros((N,N), float)
+print "Zeros N by N", A
+
+# A[i]与b对应
+for i in range(N):
+    A[i, ] = c[-N-1-i:-1-i]
+
+print "A", A
+
+# lstsq函数拟合数据，返回值包括系数向量、残差数组、A的秩以及A的奇异值
+(x, residuals, rank, s) = np.linalg.lstsq(A, b)
+
+print x, residuals, rank, s
+
+# x提供系数，dot点积即可预测下一次股价
+print np.dot(b, x)'''
+
+# 数组的修剪和压缩
+
+'''# clip返回一个修剪过的数组，小于等于给定最小值的设为给定最小值，反之亦然
+a = np.arange(5)
+print "a=", a
+print "Clipped", a.clip(1, 2)
+
+# compress返回一个给定筛选条件后的数组
+print "Compressed", a.compress(a>2)'''
+
+# 阶乘
+'''b = np.arange(1, 9)
+print "b=", b
+# 一个prod()函数即可，省略了循环
+print "Factorial", b.prod()
+
+# cumprod函数可以计算累计乘积
+print "Factorials", b.cumprod()'''
